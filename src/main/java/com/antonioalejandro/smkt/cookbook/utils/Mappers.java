@@ -9,40 +9,41 @@ import com.antonioalejandro.smkt.cookbook.model.Recipe;
 import com.antonioalejandro.smkt.cookbook.model.dto.IngredientDTO;
 import com.antonioalejandro.smkt.cookbook.model.dto.RecipeDTO;
 
-public interface Mappers extends ConstantsMappers {
+public interface Mappers {
 
 	default Document recipeToDocument(Recipe recipe) {
-		return new Document(KEY_ID, recipe.getId()).append(TITLE, recipe.getTitle()).append(TIME, recipe.getTime())
-				.append(STEPS, recipe.getSteps())
-				.append(INGREDIENTS,
+		return new Document(ConstantsMappers.KEY_ID, recipe.getId()).append(ConstantsMappers.TITLE, recipe.getTitle())
+				.append(ConstantsMappers.TIME, recipe.getTime()).append(ConstantsMappers.STEPS, recipe.getSteps())
+				.append(ConstantsMappers.INGREDIENTS,
 						recipe.getIngredients().stream().map(this::ingredientToDocument).collect(Collectors.toList()))
-				.append(USER_ID, recipe.getUserId());
+				.append(ConstantsMappers.USER_ID, recipe.getUserId());
 	}
 
 	default Document ingredientToDocument(Ingredient ingredient) {
-		return new Document().append(NAME, ingredient.getName()).append(AMOUNT, ingredient.getAmount());
+		return new Document().append(ConstantsMappers.NAME, ingredient.getName()).append(ConstantsMappers.AMOUNT,
+				ingredient.getAmount());
 	}
 
 	default Recipe documentToRecipe(Document doc) {
-		Recipe recipe = new Recipe();
-		recipe.setId(doc.getString(KEY_ID));
-		recipe.setTime(doc.getDouble(TIME));
-		recipe.setTitle(doc.getString(TITLE));
-		recipe.setSteps(doc.getList(STEPS, String.class));
-		recipe.setIngredients(doc.getList(INGREDIENTS, Document.class).stream().map(this::documentToIngredient)
-				.collect(Collectors.toList()));
+		var recipe = new Recipe();
+		recipe.setId(doc.getString(ConstantsMappers.KEY_ID));
+		recipe.setTime(doc.getDouble(ConstantsMappers.TIME));
+		recipe.setTitle(doc.getString(ConstantsMappers.TITLE));
+		recipe.setSteps(doc.getList(ConstantsMappers.STEPS, String.class));
+		recipe.setIngredients(doc.getList(ConstantsMappers.INGREDIENTS, Document.class).stream()
+				.map(this::documentToIngredient).collect(Collectors.toList()));
 		return recipe;
 	}
 
 	default Ingredient documentToIngredient(Document doc) {
-		Ingredient ingredient = new Ingredient();
-		ingredient.setName(doc.getString(NAME));
-		ingredient.setAmount(doc.getString(AMOUNT));
+		var ingredient = new Ingredient();
+		ingredient.setName(doc.getString(ConstantsMappers.NAME));
+		ingredient.setAmount(doc.getString(ConstantsMappers.AMOUNT));
 		return ingredient;
 	}
 
 	default Recipe dtoToRecipe(RecipeDTO dto) {
-		Recipe recipe = new Recipe();
+		var recipe = new Recipe();
 		recipe.setIngredients(dto.getIngredients().stream().map(this::dtoToIngredient).collect(Collectors.toList()));
 		recipe.setSteps(dto.getSteps());
 		recipe.setTime(dto.getTime());
@@ -51,7 +52,7 @@ public interface Mappers extends ConstantsMappers {
 	}
 
 	default Ingredient dtoToIngredient(IngredientDTO dto) {
-		Ingredient ingredient = new Ingredient();
+		var ingredient = new Ingredient();
 		ingredient.setAmount(dto.getAmount());
 		ingredient.setName(dto.getName());
 		return ingredient;

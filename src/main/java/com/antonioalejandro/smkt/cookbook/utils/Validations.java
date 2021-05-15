@@ -1,6 +1,7 @@
 package com.antonioalejandro.smkt.cookbook.utils;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -9,6 +10,9 @@ import com.antonioalejandro.smkt.cookbook.model.dto.IngredientDTO;
 import com.antonioalejandro.smkt.cookbook.model.dto.RecipeDTO;
 import com.antonioalejandro.smkt.cookbook.model.exceptions.CookbookException;
 
+/**
+ * The Class Validations.
+ */
 @Component
 public class Validations {
 
@@ -16,9 +20,10 @@ public class Validations {
 	 * Id.
 	 *
 	 * @param id the id
+	 * @return the validations
 	 * @throws CookbookException the error service
 	 */
-	public void id(String id) throws CookbookException {
+	public Validations id(String id) throws CookbookException {
 		if (id == null) {
 			throw mandatoryError("id");
 		}
@@ -26,22 +31,48 @@ public class Validations {
 		if (id.isBlank()) {
 			throw emptyError("id");
 		}
+		return this;
 
 	}
-
-	public void listStrings(String field, List<String> strings) throws CookbookException {
-		for (String s : strings) {
-			string(field, s);
+	
+	/**
+	 * Id.
+	 *
+	 * @param id the id
+	 * @return the validations
+	 * @throws CookbookException the cookbook exception
+	 */
+	public Validations id(Optional<String> id) throws CookbookException {
+		if (id.isPresent()) {
+			id(id);
 		}
+		return this;
+
 	}
 
 	/**
-	 * Product
+	 * List strings.
 	 *
-	 * @param product the product
+	 * @param field the field
+	 * @param strings the strings
+	 * @return the validations
+	 * @throws CookbookException the cookbook exception
+	 */
+	public Validations listStrings(String field, List<String> strings) throws CookbookException {
+		for (String s : strings) {
+			string(field, s);
+		}
+		return this;
+	}
+
+	/**
+	 * Product.
+	 *
+	 * @param recipe the recipe
+	 * @return the validations
 	 * @throws CookbookException the error service
 	 */
-	public void recipe(RecipeDTO recipe) throws CookbookException {
+	public Validations recipe(RecipeDTO recipe) throws CookbookException {
 		if (recipe == null) {
 			throw mandatoryError("recipe");
 		}
@@ -56,6 +87,7 @@ public class Validations {
 		for (IngredientDTO ingredient : recipe.getIngredients()) {
 			ingredient(ingredient);
 		}
+		return this;
 
 	}
 
@@ -63,38 +95,45 @@ public class Validations {
 	 * Ingredient.
 	 *
 	 * @param ingredient the ingredient
+	 * @return the validations
 	 * @throws CookbookException the cookbook exception
 	 */
-	public void ingredient(IngredientDTO ingredient) throws CookbookException {
+	public Validations ingredient(IngredientDTO ingredient) throws CookbookException {
 		string("ingredient name", ingredient.getName());
 		string("ingredient amount", ingredient.getAmount());
+		return this;
 	}
 
 	/**
 	 * Value.
 	 *
 	 * @param value the value
+	 * @return the validations
 	 * @throws CookbookException the error service
 	 */
-	public void value(String value) throws CookbookException {
+	public Validations value(String value) throws CookbookException {
 		if (value == null) {
 			throw mandatoryError("value");
 		}
 		if (value.isBlank()) {
 			throw emptyError("value");
 		}
+		
+		return this;
 	}
 
 	/**
 	 * Amount.
 	 *
-	 * @param amount the amount
+	 * @param time the time
+	 * @return the validations
 	 * @throws CookbookException the error service
 	 */
-	public void time(double time) throws CookbookException {
+	public Validations time(double time) throws CookbookException {
 		if (time <= 0) {
 			throw negativeOrZeroAmountError("time");
 		}
+		return this;
 
 	}
 
@@ -103,9 +142,10 @@ public class Validations {
 	 *
 	 * @param field the field
 	 * @param value the value
+	 * @return the validations
 	 * @throws CookbookException the error service
 	 */
-	public void string(String field, String value) throws CookbookException {
+	public Validations string(String field, String value) throws CookbookException {
 		if (value == null) {
 			throw mandatoryError(field);
 		}
@@ -113,6 +153,7 @@ public class Validations {
 		if (value.isBlank()) {
 			throw emptyError(field);
 		}
+		return this;
 
 	}
 

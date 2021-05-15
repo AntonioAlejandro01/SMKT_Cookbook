@@ -25,7 +25,6 @@ import com.antonioalejandro.smkt.cookbook.model.dto.RecipeDTO;
 import com.antonioalejandro.smkt.cookbook.model.enums.FilterEnum;
 import com.antonioalejandro.smkt.cookbook.model.exceptions.CookbookException;
 import com.antonioalejandro.smkt.cookbook.service.RecipeService;
-import com.antonioalejandro.smkt.cookbook.utils.Utils;
 import com.antonioalejandro.smkt.cookbook.utils.Validations;
 
 import io.swagger.annotations.Api;
@@ -53,7 +52,7 @@ public class CookbookController {
 	@GetMapping("all")
 	public ResponseEntity<List<Recipe>> all(@RequestHeader(name = "userID", required = false) String userId)
 			throws CookbookException {
-		log.info(Utils.formatLog(getClass(), "all", "userId"), userId);
+		log.info("--> Cookbook Controller - GET - /recipes/all userID: {}", userId);
 		return service.findAll(userId).map(ResponseEntity::ok).orElse(ResponseEntity.noContent().build());
 	}
 
@@ -68,7 +67,7 @@ public class CookbookController {
 	@GetMapping("/{id}")
 	public ResponseEntity<Recipe> byId(@RequestHeader(name = "userID", required = false) final String userId,
 			@PathVariable(name = "id", required = true) final String id) throws CookbookException {
-		log.info(Utils.formatLog(getClass(), "byId", "userId", "id"), userId, id);
+		log.info("--> Cookbook Controller - GET - /recipes/{} userId: {}", id, userId);
 		validations.id(id);
 		return service.findById(userId, id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 	}
@@ -76,7 +75,7 @@ public class CookbookController {
 	@GetMapping("search/ingredients")
 	public ResponseEntity<List<Recipe>> byIngredients(@RequestHeader(name = "userID", required = false) String userId,
 			@RequestParam(name = "names", required = true) List<String> names) throws CookbookException {
-		log.info(Utils.formatLog(getClass(), "byIngredients", "userId", "ingredients"), userId, names);
+		log.info("--> Cookbook Controller - GET - /recipes/ingredients?names={} - userID: {}", names, userId);
 		validations.listStrings("names", names);
 		return service.findByIngredients(userId, names).map(ResponseEntity::ok)
 				.orElse(ResponseEntity.noContent().build());
@@ -87,9 +86,8 @@ public class CookbookController {
 			@RequestHeader(name = "userID", required = false) String userId,
 			@PathVariable(name = "filter", required = true) String filter,
 			@PathVariable(name = "value", required = true) String value) throws CookbookException {
-		log.info(Utils.formatLog(getClass(), "byFilterAndValue", "userId", "filter", "value"), userId, filter, value);
-		validations.string("filter", filter);
-		validations.string("value", value);
+		log.info("--> Cookbook Controller - GET - /recipes/search/{}/{}  - userID: {}", filter, value, userId);
+		validations.string("filter", filter).string("value", value);
 		return service.findByFilter(userId, filter, value).map(ResponseEntity::ok)
 				.orElse(ResponseEntity.noContent().build());
 	}
@@ -98,23 +96,22 @@ public class CookbookController {
 	public ResponseEntity<byte[]> pdf(@RequestHeader(name = "userID", required = false) String userId,
 			@RequestHeader(name = "Authorization", required = true) String token,
 			@RequestParam(name = "id", required = false) Optional<String> id) throws CookbookException {
-		log.info(Utils.formatLog(getClass(), "getPdf", "userId", "Id?", "id"), userId, !id.isEmpty(), id);
-		if (id.isPresent()) {
-			validations.id(id.get());
-		}
+		log.info("--> Cookbook Controller - GET - /recipes/pdf{} userID: {}",
+				id.isEmpty() ? "" : String.format("?id=%s", id.get()), userId);
+		validations.id(id);
 		return service.getPdf(userId, id, token).map(ResponseEntity::ok).orElse(ResponseEntity.noContent().build());
 	}
 
 	@GetMapping("filters")
 	public ResponseEntity<List<Map<String, String>>> filters() {
-		log.info(Utils.formatLogText(getClass(), "filters", ""));
+		log.info("--> Cookbook Controller - GET - /recipes/filters");
 		return ResponseEntity.ok(FilterEnum.toBeSended());
 	}
 
 	@PostMapping("/")
 	public ResponseEntity<Recipe> createRecipe(@RequestHeader(name = "userID", required = false) String userId,
 			@RequestBody RecipeDTO recipe) throws CookbookException {
-		log.info(Utils.formatLog(getClass(), "createRecipe", "userId", "recipe"), userId, recipe);
+		log.info("--> Cookbook Controller - POST - /recipes/ - recipe: {}, userId: {}", recipe, userId);
 		validations.recipe(recipe);
 		return service.createRecipe(userId, recipe).map(body -> ResponseEntity.status(HttpStatus.CREATED).body(body))
 				.orElse(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
@@ -124,9 +121,8 @@ public class CookbookController {
 	public ResponseEntity<Recipe> updateRecipe(@RequestHeader(name = "userID", required = false) String userId,
 			@PathVariable(name = "id", required = true) String id, @RequestBody RecipeDTO recipe)
 			throws CookbookException {
-		log.info(Utils.formatLog(getClass(), "updateRecipe", "userId", "id", "recipe"), userId, id, recipe);
-		validations.id(id);
-		validations.recipe(recipe);
+		log.info("--> Cookbook Controller - PUT - recipes/{}  - recipe:{} userID: {}", id, recipe, userId);
+		validations.id(id).recipe(recipe);
 		return service.updateRecipe(userId, id, recipe).map(body -> ResponseEntity.accepted().body(body))
 				.orElse(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
 	}
@@ -134,7 +130,7 @@ public class CookbookController {
 	@DeleteMapping("{id}")
 	public ResponseEntity<Void> deleteRecipe(@RequestHeader(name = "userID", required = false) String userId,
 			@PathVariable(name = "id", required = true) String id) throws CookbookException {
-		log.info(Utils.formatLog(getClass(), "deleteRecipe", "userId", "id"), userId, id);
+		log.info("--> Cookbook Controller - DELETE - /recipes/{}  - userID: {}", id, userId);
 		validations.id(id);
 		service.deleteRecipe(userId, id);
 		return ResponseEntity.accepted().build();
@@ -148,8 +144,8 @@ public class CookbookController {
 	 */
 	@ExceptionHandler
 	public ResponseEntity<String> handleErrorService(final CookbookException error) {
-		log.error(Utils.formatLog(getClass(), "ERROR", "STATUS", "TIME", "MESSAGE"), error.getError().getStatus(),
-				error.getError().getTimestamp(), error.getError().getMessage());
+		log.error("HANDLE ERROR - STATUS: {} - MESSAGE: {} - TIMESTAMP: {}", error.getError().getStatus(),
+				error.getError().getMessage(), error.getError().getTimestamp());
 		return error.toResponse();
 	}
 }
