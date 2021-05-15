@@ -8,12 +8,12 @@ public class Utils {
 
 	}
 
-	public static String formatLog(Class clazz, String method, String... params) {
+	public static String formatLog(Class<?> clazz, String method, String... params) {
 		return new StringBuilderLog().addClassName(clazz.getSimpleName()).addMethodName(method).addParams(List.of(params))
 				.toString();
 	}
 
-	public static String formatLogText(Class clazz, String method, String text) {
+	public static String formatLogText(Class<?> clazz, String method, String text) {
 		return new StringBuilderLog().addClassName(clazz.getSimpleName()).addMethodName(method).addText(text).toString();
 	}
 

@@ -1,0 +1,6 @@
+target/
+.github/
+.git/
+LICENSE
+.gitignore
+README.md
