@@ -1,6 +1,7 @@
 package com.antonioalejandro.smkt.cookbook.utils;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -9,6 +10,9 @@ import com.antonioalejandro.smkt.cookbook.model.dto.IngredientDTO;
 import com.antonioalejandro.smkt.cookbook.model.dto.RecipeDTO;
 import com.antonioalejandro.smkt.cookbook.model.exceptions.CookbookException;
 
+/**
+ * The Class Validations.
+ */
 @Component
 public class Validations {
 
@@ -16,6 +20,7 @@ public class Validations {
 	 * Id.
 	 *
 	 * @param id the id
+	 * @return the validations
 	 * @throws CookbookException the error service
 	 */
 	public void id(String id) throws CookbookException {
@@ -29,6 +34,27 @@ public class Validations {
 
 	}
 
+	/**
+	 * Id.
+	 *
+	 * @param id the id
+	 * @return the validations
+	 * @throws CookbookException the cookbook exception
+	 */
+	public void optionalId(Optional<String> id) throws CookbookException {
+		if (id.isPresent()) {
+			id(id.get());
+		}
+	}
+
+	/**
+	 * List strings.
+	 *
+	 * @param field   the field
+	 * @param strings the strings
+	 * @return the validations
+	 * @throws CookbookException the cookbook exception
+	 */
 	public void listStrings(String field, List<String> strings) throws CookbookException {
 		for (String s : strings) {
 			string(field, s);
@@ -36,9 +62,10 @@ public class Validations {
 	}
 
 	/**
-	 * Product
+	 * Product.
 	 *
-	 * @param product the product
+	 * @param recipe the recipe
+	 * @return the validations
 	 * @throws CookbookException the error service
 	 */
 	public void recipe(RecipeDTO recipe) throws CookbookException {
@@ -53,16 +80,19 @@ public class Validations {
 		for (String step : recipe.getSteps()) {
 			string("steps", step);
 		}
+		if (recipe.getIngredients() == null || recipe.getIngredients().isEmpty()) {
+			throw new CookbookException(HttpStatus.BAD_REQUEST, "The steps is not valid");
+		}
 		for (IngredientDTO ingredient : recipe.getIngredients()) {
 			ingredient(ingredient);
 		}
-
 	}
 
 	/**
 	 * Ingredient.
 	 *
 	 * @param ingredient the ingredient
+	 * @return the validations
 	 * @throws CookbookException the cookbook exception
 	 */
 	public void ingredient(IngredientDTO ingredient) throws CookbookException {
@@ -74,6 +104,7 @@ public class Validations {
 	 * Value.
 	 *
 	 * @param value the value
+	 * @return the validations
 	 * @throws CookbookException the error service
 	 */
 	public void value(String value) throws CookbookException {
@@ -88,14 +119,14 @@ public class Validations {
 	/**
 	 * Amount.
 	 *
-	 * @param amount the amount
+	 * @param time the time
+	 * @return the validations
 	 * @throws CookbookException the error service
 	 */
 	public void time(double time) throws CookbookException {
 		if (time <= 0) {
 			throw negativeOrZeroAmountError("time");
 		}
-
 	}
 
 	/**
@@ -103,6 +134,7 @@ public class Validations {
 	 *
 	 * @param field the field
 	 * @param value the value
+	 * @return the validations
 	 * @throws CookbookException the error service
 	 */
 	public void string(String field, String value) throws CookbookException {
@@ -113,7 +145,6 @@ public class Validations {
 		if (value.isBlank()) {
 			throw emptyError(field);
 		}
-
 	}
 
 	/**
