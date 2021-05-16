@@ -38,12 +38,8 @@ public enum FilterEnum {
 	}
 
 	public SearchFunction getFunctionSearch() {
-		switch (this) {
-		case TIME:
-			return (uId, val, d) -> d.byTime(uId, Double.parseDouble(val));
-		default: // TITLE
-			return (uId, val, d) -> d.byTitle(uId, val);
-		}
+		return this == TIME ? (uId, val, d) -> d.byTime(uId, Double.parseDouble(val))
+				: (uId, val, d) -> d.byTitle(uId, val);
 	}
 
 }

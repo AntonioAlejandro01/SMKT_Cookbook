@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -71,7 +70,6 @@ public class CookbookException extends Exception {
 	 * @apiNote Save all data for the error and can be converted into JSON with
 	 *          method {@code toString()}
 	 */
-	@Data
 	@ApiModel(value = "Pantry Error", description = "Object that return when error ocurred")
 	public class JSONServiceError implements Serializable {
 
@@ -82,14 +80,17 @@ public class CookbookException extends Exception {
 
 		/** The status. */
 		@ApiModelProperty(dataType = "integer", example = "400", value = "The HTTP code error")
+		@Getter
 		private final HttpStatus status;
 
 		/** The message. */
 		@ApiModelProperty(dataType = "string", example = "Field x is not valid", value = "the message of error for give more information about what happened")
+		@Getter
 		private final String message;
 
 		/** The timestamp. */
 		@ApiModelProperty(dataType = "string", example = "1617545715", value = "the exact time when the error ocurred")
+		@Getter
 		private final long timestamp;
 
 		/** The Constant JSON_TEMPLATE. */

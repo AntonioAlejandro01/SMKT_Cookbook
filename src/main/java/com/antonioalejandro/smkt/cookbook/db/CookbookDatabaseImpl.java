@@ -13,10 +13,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.antonioalejandro.smkt.cookbook.model.Recipe;
+import com.antonioalejandro.smkt.cookbook.utils.ConstantsMappers;
 import com.antonioalejandro.smkt.cookbook.utils.Mappers;
 import com.antonioalejandro.smkt.cookbook.utils.UUIDGenerator;
-import com.antonioalejandro.smkt.cookbook.utils.Utils;
-import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -42,12 +41,19 @@ public class CookbookDatabaseImpl implements CookbookDatabase, Mappers, UUIDGene
 			@Value("${mongodb.database.name}") String databaseName,
 			@Value("${mongodb.database.collection}") String databaseCollection) {
 
-		log.info(Utils.formatLogText(getClass(), "Constructor", "Create Database connection and try to connect"));
-		MongoClient client = MongoClients.create(connectionString);
-		MongoDatabase db = client.getDatabase(databaseName);
+		log.info("Create Database connection and try to connect");
 
-		log.info(Utils.formatLogText(getClass(), "Constructor", "Create or access to collection into database"));
-		collection = db.getCollection(databaseCollection);
+		try (var client = MongoClients.create(connectionString)) {
+
+			MongoDatabase db = client.getDatabase(databaseName);
+			collection = db.getCollection(databaseCollection);
+
+			log.info("Create or access to collection into database");
+
+		} catch (Exception e) {
+			log.error("Cannot connect to database {} {}", e.getMessage(), e);
+			throw e;
+		}
 
 		// Functions
 		this.createConsumerForMongoIteratorToList = products -> doc -> products.add(this.documentToRecipe(doc));
@@ -55,65 +61,67 @@ public class CookbookDatabaseImpl implements CookbookDatabase, Mappers, UUIDGene
 
 	@Override
 	public Optional<List<Recipe>> all(String userId) {
-		log.info(Utils.formatLog(getClass(), "all", "userId"), userId);
+		log.info("--> CookbookDatabase all userId: {}", userId);
 		return evaluateList(findList(defaultDocument(userId)));
 	}
 
 	@Override
 	public Optional<Recipe> byId(String userId, String id) {
-		log.info(Utils.formatLog(getClass(), "byId", "userId", "id"), userId, id);
-		return Optional.ofNullable(collection.find(defaultDocument(userId).append(KEY_ID, id)).first())
+		log.info("--> CookbookDatabase byId userId {}, id {}", userId, id);
+		return Optional.ofNullable(collection.find(defaultDocument(userId).append(ConstantsMappers.KEY_ID, id)).first())
 				.map(this::documentToRecipe);
 	}
 
 	@Override
 	public Optional<List<Recipe>> byIngredients(String userId, List<String> ingredientsNames) {
-		log.info(Utils.formatLog(getClass(), "byIngredients", "userId", "ingredients"), userId, ingredientsNames);
-		List<Pattern> patterns = ingredientsNames.stream().map(name -> Pattern.compile(name, Pattern.CASE_INSENSITIVE)).collect(Collectors.toList());
-		return evaluateList(findList(defaultDocument(userId).append(String.format("%s.%s", INGREDIENTS,NAME), new Document("$in", patterns))));
+		log.info("--> CookbookDatabase byIngredients userId: {} , ingredients {}", userId, ingredientsNames);
+		List<Pattern> patterns = ingredientsNames.stream().map(name -> Pattern.compile(name, Pattern.CASE_INSENSITIVE))
+				.collect(Collectors.toList());
+		return evaluateList(findList(defaultDocument(userId).append(
+				String.format("%s.%s", ConstantsMappers.INGREDIENTS, ConstantsMappers.NAME),
+				new Document("$in", patterns))));
 	}
 
 	@Override
 	public Optional<List<Recipe>> byTime(String userId, double time) {
-		log.info(Utils.formatLog(getClass(), "byTime", "userId", "time"), userId, time);
-		return evaluateList(findList(defaultDocument(userId).append(TIME, new Document("$lte", time))));
+		log.info("--> CookbookDatabase  byTime userId: {}, time: {}", userId, time);
+		return evaluateList(
+				findList(defaultDocument(userId).append(ConstantsMappers.TIME, new Document("$lte", time))));
 	}
 
 	@Override
 	public Optional<List<Recipe>> byTitle(String userId, String title) {
-		log.info(Utils.formatLog(getClass(), "byTitle", "userId", "title"), userId, title);
-		return evaluateList(
-				findList(defaultDocument(userId).append(TITLE, new Document("$regex", title).append("$options", "i"))));
+		log.info("--> CookbookDatabase  byTitle userId: {}, title: {}", userId, title);
+		return evaluateList(findList(defaultDocument(userId).append(ConstantsMappers.TITLE,
+				new Document("$regex", title).append("$options", "i"))));
 	}
 
 	@Override
 	public Optional<Recipe> insert(Recipe recipe) {
-		log.info(Utils.formatLog(getClass(), "insert", "recipe"), recipe);
+		log.info(" --> CookbookDatabase  insert  recipe: {}", recipe);
 		InsertOneResult result = collection.insertOne(this.recipeToDocument(recipe));
 
 		if (!result.wasAcknowledged()) {
-
-			log.warn(Utils.formatLogText(getClass(), "insertRecipe", "The Recipe hasn't been inserted"));
-
+			log.warn("The Recipe hasn't been inserted");
 			return Optional.empty();
 		}
 
-		log.debug(Utils.formatLogText(getClass(), "insert", "id inserted: {}"),
-				result.getInsertedId().asString().getValue());
+		log.debug("inserted recipe: {}, id_inserted: {}", result.getInsertedId().asString().getValue());
 
 		return this.byId(recipe.getUserId(), result.getInsertedId().asString().getValue());
 	}
 
 	@Override
 	public Optional<Recipe> update(String userId, String id, Recipe recipe) {
-		log.info(Utils.formatLog(getClass(), "update", "userId", "id", "recipe"), userId, id, recipe);
-		Document update = this.recipeToDocument(recipe);
-		update.remove(KEY_ID);
-		update.remove(USER_ID);
-		UpdateResult result = collection.updateOne(defaultDocument(userId).append(KEY_ID, id), new Document("$set",update));
+		log.info("--> CookbookDatabase update userId id : {}, recipe: {}", userId, id, recipe);
+		var update = this.recipeToDocument(recipe);
+		update.remove(ConstantsMappers.KEY_ID);
+		update.remove(ConstantsMappers.USER_ID);
+		UpdateResult result = collection.updateOne(defaultDocument(userId).append(ConstantsMappers.KEY_ID, id),
+				new Document("$set", update));
 
 		if (result.getModifiedCount() == 0) {
-			log.warn(Utils.formatLogText(getClass(), "update", "The recipe can't be updated"));
+			log.warn("The recipe can't be updated");
 			return Optional.empty();
 		}
 
@@ -123,8 +131,8 @@ public class CookbookDatabaseImpl implements CookbookDatabase, Mappers, UUIDGene
 
 	@Override
 	public boolean delete(String userId, String id) {
-		log.info(Utils.formatLog(getClass(), "delete", "userId", "id"), userId, id);
-		return collection.deleteOne(defaultDocument(userId).append(KEY_ID, id)).getDeletedCount() > 0;
+		log.info("--> CookbookDatabase delete userId: {}, id: {}", userId, id);
+		return collection.deleteOne(defaultDocument(userId).append(ConstantsMappers.KEY_ID, id)).getDeletedCount() > 0;
 	}
 
 	/**
@@ -160,7 +168,7 @@ public class CookbookDatabaseImpl implements CookbookDatabase, Mappers, UUIDGene
 	 *         <code>{@link USER_ID}</code>, value: {@code userId}
 	 */
 	private Document defaultDocument(String userId) {
-		return new Document().append(USER_ID, userId);
+		return new Document().append(ConstantsMappers.USER_ID, userId);
 	}
 
 }
