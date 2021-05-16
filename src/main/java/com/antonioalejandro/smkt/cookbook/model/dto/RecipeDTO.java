@@ -2,7 +2,11 @@ package com.antonioalejandro.smkt.cookbook.model.dto;
 
 import java.util.List;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * The class RecipeDTO
@@ -11,7 +15,11 @@ import lombok.Data;
  * @version 1.0.0
  *
  */
-@Data
+@ToString
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class RecipeDTO {
 
 	

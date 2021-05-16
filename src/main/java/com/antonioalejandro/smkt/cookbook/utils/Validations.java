@@ -23,7 +23,7 @@ public class Validations {
 	 * @return the validations
 	 * @throws CookbookException the error service
 	 */
-	public Validations id(String id) throws CookbookException {
+	public void id(String id) throws CookbookException {
 		if (id == null) {
 			throw mandatoryError("id");
 		}
@@ -31,10 +31,9 @@ public class Validations {
 		if (id.isBlank()) {
 			throw emptyError("id");
 		}
-		return this;
 
 	}
-	
+
 	/**
 	 * Id.
 	 *
@@ -42,27 +41,24 @@ public class Validations {
 	 * @return the validations
 	 * @throws CookbookException the cookbook exception
 	 */
-	public Validations id(Optional<String> id) throws CookbookException {
+	public void optionalId(Optional<String> id) throws CookbookException {
 		if (id.isPresent()) {
-			id(id);
+			id(id.get());
 		}
-		return this;
-
 	}
 
 	/**
 	 * List strings.
 	 *
-	 * @param field the field
+	 * @param field   the field
 	 * @param strings the strings
 	 * @return the validations
 	 * @throws CookbookException the cookbook exception
 	 */
-	public Validations listStrings(String field, List<String> strings) throws CookbookException {
+	public void listStrings(String field, List<String> strings) throws CookbookException {
 		for (String s : strings) {
 			string(field, s);
 		}
-		return this;
 	}
 
 	/**
@@ -72,7 +68,7 @@ public class Validations {
 	 * @return the validations
 	 * @throws CookbookException the error service
 	 */
-	public Validations recipe(RecipeDTO recipe) throws CookbookException {
+	public void recipe(RecipeDTO recipe) throws CookbookException {
 		if (recipe == null) {
 			throw mandatoryError("recipe");
 		}
@@ -84,11 +80,12 @@ public class Validations {
 		for (String step : recipe.getSteps()) {
 			string("steps", step);
 		}
+		if (recipe.getIngredients() == null || recipe.getIngredients().isEmpty()) {
+			throw new CookbookException(HttpStatus.BAD_REQUEST, "The steps is not valid");
+		}
 		for (IngredientDTO ingredient : recipe.getIngredients()) {
 			ingredient(ingredient);
 		}
-		return this;
-
 	}
 
 	/**
@@ -98,10 +95,9 @@ public class Validations {
 	 * @return the validations
 	 * @throws CookbookException the cookbook exception
 	 */
-	public Validations ingredient(IngredientDTO ingredient) throws CookbookException {
+	public void ingredient(IngredientDTO ingredient) throws CookbookException {
 		string("ingredient name", ingredient.getName());
 		string("ingredient amount", ingredient.getAmount());
-		return this;
 	}
 
 	/**
@@ -111,15 +107,13 @@ public class Validations {
 	 * @return the validations
 	 * @throws CookbookException the error service
 	 */
-	public Validations value(String value) throws CookbookException {
+	public void value(String value) throws CookbookException {
 		if (value == null) {
 			throw mandatoryError("value");
 		}
 		if (value.isBlank()) {
 			throw emptyError("value");
 		}
-		
-		return this;
 	}
 
 	/**
@@ -129,12 +123,10 @@ public class Validations {
 	 * @return the validations
 	 * @throws CookbookException the error service
 	 */
-	public Validations time(double time) throws CookbookException {
+	public void time(double time) throws CookbookException {
 		if (time <= 0) {
 			throw negativeOrZeroAmountError("time");
 		}
-		return this;
-
 	}
 
 	/**
@@ -145,7 +137,7 @@ public class Validations {
 	 * @return the validations
 	 * @throws CookbookException the error service
 	 */
-	public Validations string(String field, String value) throws CookbookException {
+	public void string(String field, String value) throws CookbookException {
 		if (value == null) {
 			throw mandatoryError(field);
 		}
@@ -153,8 +145,6 @@ public class Validations {
 		if (value.isBlank()) {
 			throw emptyError(field);
 		}
-		return this;
-
 	}
 
 	/**

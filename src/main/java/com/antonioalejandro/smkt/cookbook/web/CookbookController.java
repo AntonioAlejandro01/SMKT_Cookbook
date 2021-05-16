@@ -87,7 +87,8 @@ public class CookbookController {
 			@PathVariable(name = "filter", required = true) String filter,
 			@PathVariable(name = "value", required = true) String value) throws CookbookException {
 		log.info("--> Cookbook Controller - GET - /recipes/search/{}/{}  - userID: {}", filter, value, userId);
-		validations.string("filter", filter).string("value", value);
+		validations.string("filter", filter);
+		validations.string("value", value);
 		return service.findByFilter(userId, filter, value).map(ResponseEntity::ok)
 				.orElse(ResponseEntity.noContent().build());
 	}
@@ -98,7 +99,7 @@ public class CookbookController {
 			@RequestParam(name = "id", required = false) Optional<String> id) throws CookbookException {
 		log.info("--> Cookbook Controller - GET - /recipes/pdf{} userID: {}",
 				id.isEmpty() ? "" : String.format("?id=%s", id.get()), userId);
-		validations.id(id);
+		validations.optionalId(id);
 		return service.getPdf(userId, id, token).map(ResponseEntity::ok).orElse(ResponseEntity.noContent().build());
 	}
 
@@ -122,7 +123,8 @@ public class CookbookController {
 			@PathVariable(name = "id", required = true) String id, @RequestBody RecipeDTO recipe)
 			throws CookbookException {
 		log.info("--> Cookbook Controller - PUT - recipes/{}  - recipe:{} userID: {}", id, recipe, userId);
-		validations.id(id).recipe(recipe);
+		validations.id(id);
+		validations.recipe(recipe);
 		return service.updateRecipe(userId, id, recipe).map(body -> ResponseEntity.accepted().body(body))
 				.orElse(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
 	}
