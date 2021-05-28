@@ -48,6 +48,31 @@ class TokenFilterTest {
 		});
 
 	}
+	
+	@Test
+	void testSecureEndpointIncorrectToken() throws Exception {
+		var req = mock(HttpServletRequest.class);
+		var res = mock(HttpServletResponse.class);
+		when(req.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("es");
+		when(req.getRequestURI()).thenReturn("/recipes/filters");
+
+		assertDoesNotThrow(() -> {
+			filter.doFilter(req, res, mock(FilterChain.class));
+		});
+
+	}
+	@Test
+	void testSecureEndpointIncorrectToken2() throws Exception {
+		var req = mock(HttpServletRequest.class);
+		var res = mock(HttpServletResponse.class);
+		when(req.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer ");
+		when(req.getRequestURI()).thenReturn("/recipes/filters");
+
+		assertDoesNotThrow(() -> {
+			filter.doFilter(req, res, mock(FilterChain.class));
+		});
+
+	}
 
 	@Test
 	void testSecureEndpointNotUserId() throws Exception {
