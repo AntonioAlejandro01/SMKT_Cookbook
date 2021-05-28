@@ -20,7 +20,14 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-/** The Constant log. */
+/**
+ * Token Service Implementation
+ * 
+ * @author AntonioAlejandro01 - www.antonioalejandro.com
+ * @version 1.0.0
+ * @see TokenService
+ * @see TokenData
+ */
 @Service
 @Slf4j
 public class TokenServiceImpl implements TokenService {
@@ -43,12 +50,7 @@ public class TokenServiceImpl implements TokenService {
 	/** The Constant AUTH_VALUE. */
 	private static final String AUTH_VALUE = "Basic c21hcnRraXRjaGVuYXBwOjEzMzMx";
 
-	/**
-	 * Gets the user id.
-	 *
-	 * @param token the token
-	 * @return the user id
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public Optional<String> getUserId(String token) {
 		var client = new OkHttpClient();
@@ -72,9 +74,9 @@ public class TokenServiceImpl implements TokenService {
 	}
 
 	/**
-	 * Gets the url.
+	 * Get the URL from Eureka Discovery Service
 	 *
-	 * @return the url
+	 * @return the url {@link String}
 	 */
 	private String getUrl() {
 		ServiceInstance instanceInfo = discoveryClient.getInstances(idOauthInstance).get(0);
@@ -82,7 +84,7 @@ public class TokenServiceImpl implements TokenService {
 	}
 
 	/**
-	 * Parses the json.
+	 * Parse the JSON to {@link TokenData}
 	 *
 	 * @param json the json
 	 * @return the optional

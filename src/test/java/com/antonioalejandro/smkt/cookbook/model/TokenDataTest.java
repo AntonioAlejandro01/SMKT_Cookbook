@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-public class TokenDataTest {
+class TokenDataTest {
 
 	@Test
 	void testEmptyConstrcutorsAndToString() throws Exception {

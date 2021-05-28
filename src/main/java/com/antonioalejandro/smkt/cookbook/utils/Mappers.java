@@ -9,8 +9,21 @@ import com.antonioalejandro.smkt.cookbook.model.Recipe;
 import com.antonioalejandro.smkt.cookbook.model.dto.IngredientDTO;
 import com.antonioalejandro.smkt.cookbook.model.dto.RecipeDTO;
 
+/**
+ * Mappers Interface
+ * 
+ * @author AntonioAlejandro01 - www.antonioalejandro.com
+ * @version 1.0.0
+ *
+ */
 public interface Mappers {
 
+	/**
+	 * Default map recipe to document
+	 * 
+	 * @param recipe {@link Recipe}
+	 * @return {@link Document}
+	 */
 	default Document recipeToDocument(Recipe recipe) {
 		return new Document(ConstantsMappers.KEY_ID, recipe.getId()).append(ConstantsMappers.TITLE, recipe.getTitle())
 				.append(ConstantsMappers.TIME, recipe.getTime()).append(ConstantsMappers.STEPS, recipe.getSteps())
@@ -19,11 +32,23 @@ public interface Mappers {
 				.append(ConstantsMappers.USER_ID, recipe.getUserId());
 	}
 
+	/**
+	 * Default map ingredient to document
+	 * 
+	 * @param ingredient {@link Ingredient}
+	 * @return {@link Document}
+	 */
 	default Document ingredientToDocument(Ingredient ingredient) {
 		return new Document().append(ConstantsMappers.NAME, ingredient.getName()).append(ConstantsMappers.AMOUNT,
 				ingredient.getAmount());
 	}
 
+	/**
+	 * Default map document to recipe
+	 * 
+	 * @param doc {@link Document}
+	 * @return {@link Recipe}
+	 */
 	default Recipe documentToRecipe(Document doc) {
 		var recipe = new Recipe();
 		recipe.setId(doc.getString(ConstantsMappers.KEY_ID));
@@ -35,6 +60,12 @@ public interface Mappers {
 		return recipe;
 	}
 
+	/**
+	 * Default map document to Ingredient
+	 * 
+	 * @param doc {@link Document}
+	 * @return {@link Ingredient}
+	 */
 	default Ingredient documentToIngredient(Document doc) {
 		var ingredient = new Ingredient();
 		ingredient.setName(doc.getString(ConstantsMappers.NAME));
@@ -42,6 +73,12 @@ public interface Mappers {
 		return ingredient;
 	}
 
+	/**
+	 * Default map RecipeDTO to Recipe
+	 * 
+	 * @param dto {@link RecipeDTO}
+	 * @return {@link Recipe}
+	 */
 	default Recipe dtoToRecipe(RecipeDTO dto) {
 		var recipe = new Recipe();
 		recipe.setIngredients(dto.getIngredients().stream().map(this::dtoToIngredient).collect(Collectors.toList()));
@@ -51,6 +88,12 @@ public interface Mappers {
 		return recipe;
 	}
 
+	/**
+	 * Default map IngredientDTO to Ingredient
+	 * 
+	 * @param dto {@link IngredientDTO}
+	 * @return {@link Ingredient}
+	 */
 	default Ingredient dtoToIngredient(IngredientDTO dto) {
 		var ingredient = new Ingredient();
 		ingredient.setAmount(dto.getAmount());
