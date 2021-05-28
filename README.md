@@ -2,6 +2,7 @@
 
 Service to manage recipes in SmartKitchen App
 
+[![Build Dev](https://github.com/AntonioAlejandro01/SMKT_Cookbook/actions/workflows/buildDevVersion.yml/badge.svg?branch=develop)](https://github.com/AntonioAlejandro01/SMKT_Cookbook/actions/workflows/buildDevVersion.yml) [![Build Snapshot](https://github.com/AntonioAlejandro01/SMKT_Cookbook/actions/workflows/BuildSnapshot.yml/badge.svg?branch=main)](https://github.com/AntonioAlejandro01/SMKT_Cookbook/actions/workflows/buildDevVersion.yml) [![Build Release](https://github.com/AntonioAlejandro01/SMKT_Cookbook/actions/workflows/BuildRelease.yml/badge.svg?branch=main)](https://github.com/AntonioAlejandro01/SMKT_Cookbook/actions/workflows/buildDevVersion.yml)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=AntonioAlejandro01_SMKT_Cookbook&metric=alert_status)](https://sonarcloud.io/dashboard?id=AntonioAlejandro01_SMKT_Cookbook) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=AntonioAlejandro01_SMKT_Cookbook&metric=coverage)](https://sonarcloud.io/dashboard?id=AntonioAlejandro01_SMKT_Cookbook)
 
