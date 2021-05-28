@@ -88,27 +88,32 @@ Use this Service with Docker as Docker container. The Repo have 3 types of image
 #### Docker command
 
 ```bash
-    docker run -d -p4080:4080 
-    -ePORT=4080 
-    -eEUREKA_URL=http://127.0.0.1:8761/eureka
-    -eDB_NAME=smkt
-    -eDB_COLLECTION=recipes
-    -eDB_CONNECTION=mongodb://root:secret@127.0.0.1:27017/
-     -t antonioalejandro01/smkt-cookbook:latest
+    docker run -d -p4080:4080 -ePORT=4080 -eEUREKA_URL=http://127.0.0.1:8761/eureka -eDB_NAME=smkt -eDB_COLLECTION=recipes -eDB_CONNECTION=mongodb://root:secret@127.0.0.1:27017/ -t antonioalejandro01/smkt-cookbook:latest
  ```
 
 ## Use in Docker Compose
 
 ```yaml
-    eureka:
-        image: antonioalejandro01/smkt-eureka:1
-        container_name: smkt-eureka
+    cookbook:
+        image: antonioalejandro01/smkt-cookbook:latest
+        container_name: smkt-cookbook
         environment:
             PORT: 4080
+            EUREKA_URL: http://127.0.0.1:8761/eureka
+            DB_NAME: smkt
+            DB_COLLECTION: recipes
+            DB_CONNECTION: mongodb://root@secret@mongo:27017/
         expose:
             - "4080"
         ports: 
             - "4080:4080"
+    mongo: # Mongo database for microservice
+        image: mongo
+        container_name: smkt-mongo
+        restart: always
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: secret
 ```
 
 
