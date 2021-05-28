@@ -3,12 +3,13 @@ package com.antonioalejandro.smkt.cookbook.utils;
 import java.util.UUID;
 
 /**
- * The Class Utils.
+ * 
+ * UUID generator interface
  */
 public interface UUIDGenerator {
 
 	/**
-	 * Generate UUID.
+	 * Default generate UUID
 	 *
 	 * @return the string
 	 */

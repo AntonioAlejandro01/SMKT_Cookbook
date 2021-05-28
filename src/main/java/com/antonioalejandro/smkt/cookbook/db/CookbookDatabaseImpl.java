@@ -24,6 +24,18 @@ import com.mongodb.client.result.UpdateResult;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Cookbook Database Implementation
+ * 
+ * @author AntonioAlejandro01 - www.antonioalejandro.com
+ * @version 1.0.0
+ * @see CookbookDatabase
+ * @see Mappers
+ * @see UUIDGenerator
+ * @see Recipe
+ * @see Document
+ * 
+ */
 @Service
 @Slf4j
 public class CookbookDatabaseImpl implements CookbookDatabase, Mappers, UUIDGenerator {
@@ -59,12 +71,18 @@ public class CookbookDatabaseImpl implements CookbookDatabase, Mappers, UUIDGene
 		this.createConsumerForMongoIteratorToList = products -> doc -> products.add(this.documentToRecipe(doc));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Optional<List<Recipe>> all(String userId) {
 		log.info("--> CookbookDatabase all userId: {}", userId);
 		return evaluateList(findList(defaultDocument(userId)));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Optional<Recipe> byId(String userId, String id) {
 		log.info("--> CookbookDatabase byId userId {}, id {}", userId, id);
@@ -72,6 +90,9 @@ public class CookbookDatabaseImpl implements CookbookDatabase, Mappers, UUIDGene
 				.map(this::documentToRecipe);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Optional<List<Recipe>> byIngredients(String userId, List<String> ingredientsNames) {
 		log.info("--> CookbookDatabase byIngredients userId: {} , ingredients {}", userId, ingredientsNames);
@@ -82,6 +103,9 @@ public class CookbookDatabaseImpl implements CookbookDatabase, Mappers, UUIDGene
 				new Document("$in", patterns))));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Optional<List<Recipe>> byTime(String userId, double time) {
 		log.info("--> CookbookDatabase  byTime userId: {}, time: {}", userId, time);
@@ -89,6 +113,9 @@ public class CookbookDatabaseImpl implements CookbookDatabase, Mappers, UUIDGene
 				findList(defaultDocument(userId).append(ConstantsMappers.TIME, new Document("$lte", time))));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Optional<List<Recipe>> byTitle(String userId, String title) {
 		log.info("--> CookbookDatabase  byTitle userId: {}, title: {}", userId, title);
@@ -96,6 +123,9 @@ public class CookbookDatabaseImpl implements CookbookDatabase, Mappers, UUIDGene
 				new Document("$regex", title).append("$options", "i"))));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Optional<Recipe> insert(Recipe recipe) {
 		log.info(" --> CookbookDatabase  insert  recipe: {}", recipe);
@@ -111,6 +141,9 @@ public class CookbookDatabaseImpl implements CookbookDatabase, Mappers, UUIDGene
 		return this.byId(recipe.getUserId(), result.getInsertedId().asString().getValue());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Optional<Recipe> update(String userId, String id, Recipe recipe) {
 		log.info("--> CookbookDatabase update userId id : {}, recipe: {}", userId, id, recipe);
@@ -129,6 +162,9 @@ public class CookbookDatabaseImpl implements CookbookDatabase, Mappers, UUIDGene
 
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean delete(String userId, String id) {
 		log.info("--> CookbookDatabase delete userId: {}, id: {}", userId, id);

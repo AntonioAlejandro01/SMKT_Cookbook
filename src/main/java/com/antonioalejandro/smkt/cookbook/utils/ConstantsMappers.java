@@ -1,13 +1,17 @@
 package com.antonioalejandro.smkt.cookbook.utils;
 
 /**
- * The Class ConstantsMappers.
+ * Constants Mappers Class
+ * 
+ * @author AntonioAlejandro01 - www.antonioalejandro.com
+ * @version 1.0.0
  */
 public class ConstantsMappers {
 
 	private ConstantsMappers() {
-		// Empty Cosntructor
+		// Empty Constructor
 	}
+
 	/** ID */
 	public static final String KEY_ID = "_id";
 	/** RECIPE */

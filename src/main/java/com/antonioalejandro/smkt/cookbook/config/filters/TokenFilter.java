@@ -26,7 +26,6 @@ import com.antonioalejandro.smkt.cookbook.service.TokenService;
 
 import lombok.extern.slf4j.Slf4j;
 
-
 /**
  * The Class TokenFilter.
  * 
@@ -47,7 +46,7 @@ public class TokenFilter implements Filter {
 
 	/** The Constant SECURE_ENDPOINT. */
 	private static final String SECURE_ENDPOINT = "/recipes/";
-	
+
 	/**
 	 * Do filter.
 	 *
@@ -65,10 +64,10 @@ public class TokenFilter implements Filter {
 		if (httpRequest.getRequestURI().startsWith(SECURE_ENDPOINT)) {
 
 			Optional<String> token = Optional.ofNullable(httpRequest.getHeader("Authorization"))
-					.map(tok -> tok.split(" ")[1]);
+					.filter(tok -> tok.contains("Bearer ") && tok.length() > 8).map(tok -> tok.split(" ")[1]);
 
 			if (token.isEmpty()) {
-				log.info("Request without token");
+				log.info("Request without token or token format not valid");
 				myResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
 				return;
 			}

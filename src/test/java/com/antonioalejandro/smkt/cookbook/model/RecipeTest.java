@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-public class RecipeTest {
+class RecipeTest {
 
 	@Test
 	void testEmptyConstructorAndToString() throws Exception {
