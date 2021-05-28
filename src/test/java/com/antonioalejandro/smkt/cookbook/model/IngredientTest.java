@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-public class IngredientTest {
+class IngredientTest {
 
 	@Test
 	void testEmptyConstructorAndToString() throws Exception {

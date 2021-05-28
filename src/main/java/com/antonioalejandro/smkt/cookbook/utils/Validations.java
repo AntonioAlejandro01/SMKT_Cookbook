@@ -11,7 +11,10 @@ import com.antonioalejandro.smkt.cookbook.model.dto.RecipeDTO;
 import com.antonioalejandro.smkt.cookbook.model.exceptions.CookbookException;
 
 /**
- * The Class Validations.
+ * Validations Class
+ * @author AntonioAlejandro01 - www.antonioalejandro.com
+ * @version 1.0.0
+ * @see CookbookException
  */
 @Component
 public class Validations {

@@ -1,6 +1,5 @@
 package com.antonioalejandro.smkt.cookbook.db;
 
-import static org.hamcrest.CoreMatchers.any;
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -30,11 +29,13 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 
+@SuppressWarnings("unchecked")
 class CookbookDatabaseTest {
 
 	private CookbookDatabaseImpl db;
 
 	private MongoCollection<Document> collection;
+
 
 	@BeforeEach
 	void init() {
@@ -50,7 +51,7 @@ class CookbookDatabaseTest {
 	void testfindAll() throws Exception {
 		db = new CookbookDatabaseImpl("mongodb://root:secret@localhost:27017/", "smkt", "recipes");
 		ReflectionTestUtils.setField(db, "collection", collection);
-		FindIterable<Document> iterable = mock(FindIterable.class);
+		FindIterable<Document> iterable = (FindIterable<Document>) mock(FindIterable.class);
 		MongoCursor<Document> cursor = mock(MongoCursor.class);
 
 		Document doc1 = new Document("_id", UUID.randomUUID().toString()).append("title", "Recipe Test 1")
@@ -104,7 +105,6 @@ class CookbookDatabaseTest {
 		ReflectionTestUtils.setField(db, "collection", collection);
 
 		FindIterable<Document> iterable = mock(FindIterable.class);
-		MongoCursor<Document> cursor = mock(MongoCursor.class);
 		String id = UUID.randomUUID().toString();
 		Document doc1 = new Document("_id", id).append("title", "Recipe Test 1").append("time", 1.23d)
 				.append("steps", Arrays.asList("Step 1", "Step 2")).append("ingredients",
@@ -131,7 +131,6 @@ class CookbookDatabaseTest {
 		ReflectionTestUtils.setField(db, "collection", collection);
 
 		FindIterable<Document> iterable = mock(FindIterable.class);
-		MongoCursor<Document> cursor = mock(MongoCursor.class);
 
 		when(collection.find(Mockito.any(Document.class))).thenReturn(iterable);
 
@@ -304,7 +303,6 @@ class CookbookDatabaseTest {
 		db = new CookbookDatabaseImpl("mongodb://root:secret@localhost:27017/", "smkt", "recipes");
 		ReflectionTestUtils.setField(db, "collection", collection);
 		FindIterable<Document> iterable = mock(FindIterable.class);
-		MongoCursor<Document> cursor = mock(MongoCursor.class);
 		InsertOneResult result = mock(InsertOneResult.class);
 
 		Document doc1 = new Document("_id", UUID.randomUUID().toString()).append("title", "Recipe Test 1")
@@ -341,7 +339,6 @@ class CookbookDatabaseTest {
 		ReflectionTestUtils.setField(db, "collection", collection);
 		FindIterable<Document> iterable = mock(FindIterable.class);
 		InsertOneResult result = mock(InsertOneResult.class);
-		MongoCursor<Document> cursor = mock(MongoCursor.class);
 
 		when(collection.find(Mockito.any(Document.class))).thenReturn(iterable);
 		when(collection.insertOne(Mockito.any())).thenReturn(result);
@@ -366,7 +363,6 @@ class CookbookDatabaseTest {
 		db = new CookbookDatabaseImpl("mongodb://root:secret@localhost:27017/", "smkt", "recipes");
 		ReflectionTestUtils.setField(db, "collection", collection);
 		FindIterable<Document> iterable = mock(FindIterable.class);
-		MongoCursor<Document> cursor = mock(MongoCursor.class);
 		UpdateResult result = mock(UpdateResult.class);
 
 		var id = UUID.randomUUID().toString();
@@ -402,7 +398,6 @@ class CookbookDatabaseTest {
 	void testUpdateEmpty() throws Exception {
 		db = new CookbookDatabaseImpl("mongodb://root:secret@localhost:27017/", "smkt", "recipes");
 		ReflectionTestUtils.setField(db, "collection", collection);
-		MongoCursor<Document> cursor = mock(MongoCursor.class);
 		UpdateResult result = mock(UpdateResult.class);
 
 		var id = UUID.randomUUID().toString();
@@ -429,7 +424,6 @@ class CookbookDatabaseTest {
 	void testDelete() throws Exception {
 		db = new CookbookDatabaseImpl("mongodb://root:secret@localhost:27017/", "smkt", "recipes");
 		ReflectionTestUtils.setField(db, "collection", collection);
-		MongoCursor<Document> cursor = mock(MongoCursor.class);
 		DeleteResult result = mock(DeleteResult.class);
 		when(result.getDeletedCount()).thenReturn(1L);
 		when(collection.deleteOne(Mockito.any(Document.class))).thenReturn(result);
@@ -441,7 +435,6 @@ class CookbookDatabaseTest {
 	void testDeleteEmpty() throws Exception {
 		db = new CookbookDatabaseImpl("mongodb://root:secret@localhost:27017/", "smkt", "recipes");
 		ReflectionTestUtils.setField(db, "collection", collection);
-		MongoCursor<Document> cursor = mock(MongoCursor.class);
 		DeleteResult result = mock(DeleteResult.class);
 		when(result.getDeletedCount()).thenReturn(0L);
 		when(collection.deleteOne(Mockito.any(Document.class))).thenReturn(result);

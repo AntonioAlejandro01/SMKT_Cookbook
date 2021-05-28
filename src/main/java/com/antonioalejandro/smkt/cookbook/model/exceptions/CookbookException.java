@@ -70,7 +70,7 @@ public class CookbookException extends Exception {
 	 * @apiNote Save all data for the error and can be converted into JSON with
 	 *          method {@code toString()}
 	 */
-	@ApiModel(value = "Pantry Error", description = "Object that return when error ocurred")
+	@ApiModel(value = "Cookbook Error", description = "Object that return when error ocurred")
 	public class JSONServiceError implements Serializable {
 
 		/** The Constant serialVersionUID. */

@@ -32,6 +32,9 @@ import okhttp3.RequestBody;
  * 
  * @author AntonioAlejandro01 - www.antonioalejandro.com
  * @version 1.0.0
+ * @see RecipeService
+ * @see Mappers
+ * @see UUIDGenerator
  * 
  */
 @Service
@@ -50,18 +53,21 @@ public class RecipeServiceImpl implements RecipeService, Mappers, UUIDGenerator 
 	@Value("${id_files_instance}")
 	private String idFileInstance;
 
+	/** {@inherithDoc} */
 	@Override
 	public Optional<List<Recipe>> findAll(String userId) throws CookbookException {
 		log.info("--> RecipeServiceImpl findAll userId: {}", userId);
 		return db.all(userId);
 	}
 
+	/** {@inherithDoc} */
 	@Override
 	public Optional<Recipe> findById(String userId, String id) throws CookbookException {
 		log.info("--> RecipeServiceImpl  findById userId: {}, id: {}", userId, id);
 		return db.byId(userId, id);
 	}
 
+	/** {@inherithDoc} */
 	@Override
 	public Optional<List<Recipe>> findByIngredients(String userId, List<String> ingredientsNames)
 			throws CookbookException {
@@ -69,6 +75,7 @@ public class RecipeServiceImpl implements RecipeService, Mappers, UUIDGenerator 
 		return db.byIngredients(userId, ingredientsNames);
 	}
 
+	/** {@inherithDoc} */
 	@Override
 	public Optional<List<Recipe>> findByFilter(String userId, String filter, String value) throws CookbookException {
 		log.info(" --> RecipeServiceImpl  findbyFilter userId: {}, filter: {}, value: {}", userId, filter, value);
@@ -80,6 +87,7 @@ public class RecipeServiceImpl implements RecipeService, Mappers, UUIDGenerator 
 		return filterEnum.get().getFunctionSearch().search(userId, value, db);
 	}
 
+	/** {@inherithDoc} */
 	@Override
 	public Optional<byte[]> getPdf(String userId, Optional<String> id, String token) throws CookbookException {
 		log.info("--> RecipeServiceImpl  getPdf userId: {}, haveId?:{}, id:{}", userId, !id.isEmpty(), id);
@@ -111,6 +119,7 @@ public class RecipeServiceImpl implements RecipeService, Mappers, UUIDGenerator 
 		}
 	}
 
+	/** {@inherithDoc} */
 	@Override
 	public Optional<Recipe> createRecipe(String userId, RecipeDTO recipe) throws CookbookException {
 		log.info("--> RecipeServiceImpl createRecipe userId: {}, recipe: {}", userId, recipe);
@@ -125,12 +134,14 @@ public class RecipeServiceImpl implements RecipeService, Mappers, UUIDGenerator 
 		return db.insert(recipeToInsert);
 	}
 
+	/** {@inherithDoc} */
 	@Override
 	public Optional<Recipe> updateRecipe(String userId, String id, RecipeDTO recipe) throws CookbookException {
 		log.info("--> RecipeServiceImpl updateRecipe userId: {}, id: {}, recipe: {}", userId, id, recipe);
 		return db.update(userId, id, this.dtoToRecipe(recipe));
 	}
 
+	/** {@inherithDoc} */
 	@Override
 	public void deleteRecipe(String userId, String id) throws CookbookException {
 		log.info("--> RecipeServiceImpl deleteRecipe: {} userId: {}, id: {}", userId, id);

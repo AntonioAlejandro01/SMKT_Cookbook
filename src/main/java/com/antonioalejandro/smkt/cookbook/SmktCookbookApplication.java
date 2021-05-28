@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * The Class SmktCookbookApplication.
  * 
- * @author AntonioAlejandro01 - <a href="http://www.antonioalejandro.com">www.antonioalejandro.com</a>
+ * @author AntonioAlejandro01 - www.antonioalejandro.com
  * @version 1.0.0
  * @apiNote Entry Point for the APP
  */
