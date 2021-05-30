@@ -55,8 +55,8 @@ public class CookbookDatabaseImpl implements CookbookDatabase, Mappers, UUIDGene
 
 		log.info("Create Database connection and try to connect");
 
-		try (var client = MongoClients.create(connectionString)) {
-
+		try {
+			var client = MongoClients.create(connectionString);
 			MongoDatabase db = client.getDatabase(databaseName);
 			collection = db.getCollection(databaseCollection);
 

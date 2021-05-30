@@ -2,7 +2,11 @@
 
 Service to manage recipes in SmartKitchen App
 
-[![Build Dev](https://github.com/AntonioAlejandro01/SMKT_Cookbook/actions/workflows/buildDevVersion.yml/badge.svg?branch=develop)](https://github.com/AntonioAlejandro01/SMKT_Cookbook/actions/workflows/buildDevVersion.yml) [![Build Snapshot](https://github.com/AntonioAlejandro01/SMKT_Cookbook/actions/workflows/BuildSnapshot.yml/badge.svg?branch=main)](https://github.com/AntonioAlejandro01/SMKT_Cookbook/actions/workflows/buildDevVersion.yml) [![Build Release](https://github.com/AntonioAlejandro01/SMKT_Cookbook/actions/workflows/BuildRelease.yml/badge.svg?branch=main)](https://github.com/AntonioAlejandro01/SMKT_Cookbook/actions/workflows/buildDevVersion.yml)
+![JAVA](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white) ![Spring](https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white) ![Mongo](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
+
+[![Build Dev](https://github.com/AntonioAlejandro01/SMKT_Cookbook/actions/workflows/buildDevVersion.yml/badge.svg?branch=develop)](https://github.com/AntonioAlejandro01/SMKT_Cookbook/actions/workflows/buildDevVersion.yml) [![Build Snapshot](https://github.com/AntonioAlejandro01/SMKT_Cookbook/actions/workflows/BuildSnapshot.yml/badge.svg)](https://github.com/AntonioAlejandro01/SMKT_Cookbook/actions/workflows/BuildSnapshot.yml) [![Build Stable Version](https://github.com/AntonioAlejandro01/SMKT_Cookbook/actions/workflows/BuildRelease.yml/badge.svg)](https://github.com/AntonioAlejandro01/SMKT_Cookbook/actions/workflows/BuildRelease.yml)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=AntonioAlejandro01_SMKT_Cookbook&metric=alert_status)](https://sonarcloud.io/dashboard?id=AntonioAlejandro01_SMKT_Cookbook) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=AntonioAlejandro01_SMKT_Cookbook&metric=coverage)](https://sonarcloud.io/dashboard?id=AntonioAlejandro01_SMKT_Cookbook)
 
@@ -12,19 +16,19 @@ Use this Service with Docker as Docker container. The Repo have 3 types of image
 
 ### Types
 
-- **Stable**: this are the images that in her tag is a specific version ex.: ```antonioalejandro01/smkt-cookbook:vX.X.X```. the last tag version have latest tag. 
+- **Stable**: These are the images that in her tag have a specific version ex.: ```antonioalejandro01/smkt-cookbook:vX.X.X```. The last tag version have tag latest. 
 ```bash
     docker pull antonioalejandro01/smkt-cookbook:v1.0.0
     # The last stable version
     docker pull antonioalejandro01/smkt-cookbook:latest
  ```
 
-- **Snapshot**: this are the images that in her tag is snapshot ex.: ```antonioalejandro01/smkt-cookbook:snapshot```
+- **Snapshot**: This is the image that in her tag have snapshot word ex.: ```antonioalejandro01/smkt-cookbook:snapshot```
 ```bash 
     docker pull antonioalejandro01/smkt-cookbook:snapshot
 ```
 
-- **Dev**: this image is only for developers and in her tag have dev ```antonioalejandro01/smkt-cookbook:dev```
+- **Dev**: This image is only for developers and in her tag have dev word ```antonioalejandro01/smkt-cookbook:dev```
 ```bash
     docker pull antonioalejandro01/smkt-cookbook:dev
  ```
