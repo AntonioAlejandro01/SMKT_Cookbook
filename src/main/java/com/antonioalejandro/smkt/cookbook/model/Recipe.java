@@ -2,6 +2,9 @@ package com.antonioalejandro.smkt.cookbook.model;
 
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.annotations.ApiModel;
@@ -23,9 +26,11 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(description = "Recipe for response , include de ID", value = "Recipe Response")
+@Document(collection = "recipes")
 public class Recipe {
 
 	@ApiModelProperty(dataType = "string", example = "123e4567-e89b-42d3-a456-556642440000", position = 0, value = "The ID for Product, it's a UUID")
+	@Id
 	private String id;
 
 	@ApiModelProperty(dataType = "string", example = "Fries Eggs", position = 1, value = "The title for the recipe")

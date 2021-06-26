@@ -3,8 +3,8 @@ package com.antonioalejandro.smkt.cookbook.utils;
 import java.util.List;
 import java.util.Optional;
 
-import com.antonioalejandro.smkt.cookbook.db.CookbookDatabase;
 import com.antonioalejandro.smkt.cookbook.model.Recipe;
+import com.antonioalejandro.smkt.cookbook.repository.CookbookRepository;
 
 /**
  * Search Function Functional Interface
@@ -21,8 +21,8 @@ public interface SearchFunction {
 	 * 
 	 * @param userId {@link String}
 	 * @param value  {@link String}
-	 * @param db     {@link CookbookDatabase}
+	 * @param db     {@link CookbookRepository}
 	 * @return
 	 */
-	public Optional<List<Recipe>> search(String userId, String value, CookbookDatabase db);
+	public Optional<List<Recipe>> search(String userId, String value, CookbookRepository repo);
 }

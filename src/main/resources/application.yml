@@ -1,7 +1,10 @@
 spring:
   application:
     name: smkt-cookbook
-
+  data:
+    mongodb:
+      uri: mongodb://root:secret@localhost:27017/ 
+      database: smkt
 server:
   port: 4080
 
@@ -17,13 +20,6 @@ eureka:
 logging:
   level:
     '[com.antonioalejandro.smkt.cookbook]': DEBUG
-    
-    
-mongodb:
-  connection: mongodb://root:secret@localhost:27017/
-  database:
-    name: smkt
-    collection: recipes
-
+  
 id_files_instance: smkt-files
 id_oauth_instance: smkt-oauth

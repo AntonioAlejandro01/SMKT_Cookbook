@@ -20,18 +20,18 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 
-import com.antonioalejandro.smkt.cookbook.db.CookbookDatabase;
 import com.antonioalejandro.smkt.cookbook.model.Recipe;
 import com.antonioalejandro.smkt.cookbook.model.dto.IngredientDTO;
 import com.antonioalejandro.smkt.cookbook.model.dto.RecipeDTO;
 import com.antonioalejandro.smkt.cookbook.model.enums.FilterEnum;
 import com.antonioalejandro.smkt.cookbook.model.exceptions.CookbookException;
+import com.antonioalejandro.smkt.cookbook.repository.CookbookRepository;
 import com.antonioalejandro.smkt.cookbook.service.impl.RecipeServiceImpl;
 
 class RecipeServiceImplTest {
 
 	@Mock
-	private CookbookDatabase db;
+	private CookbookRepository db;
 
 	@Mock
 	private DiscoveryClient client;
@@ -46,9 +46,9 @@ class RecipeServiceImplTest {
 
 	@Test
 	void testFindAll() throws Exception {
-		when(db.all(Mockito.anyString())).thenReturn(Optional.empty());
+		when(db.all(Mockito.anyString())).thenReturn(List.of());
 
-		assertTrue(service.findAll("ADMIN").isEmpty());
+		assertTrue(service.findAll("ADMIN").isPresent());
 	}
 
 	@Test
@@ -60,15 +60,15 @@ class RecipeServiceImplTest {
 
 	@Test
 	void testFindByIngredients() throws Exception {
-		when(db.byIngredients(Mockito.anyString(), Mockito.anyList())).thenReturn(Optional.empty());
+		when(db.byIngredients(Mockito.anyString(), Mockito.anyList())).thenReturn(List.of());
 
 		assertTrue(service.findByIngredients("ADMIN", List.of()).isEmpty());
 	}
 
 	@Test
 	void testByFilter() throws Exception {
-		when(db.byTime(Mockito.anyString(), Mockito.anyDouble())).thenReturn(Optional.empty());
-		when(db.byTitle(Mockito.anyString(), Mockito.anyString())).thenReturn(Optional.empty());
+		when(db.byTime(Mockito.anyString(), Mockito.anyDouble())).thenReturn(List.of());
+		when(db.byTitle(Mockito.anyString(), Mockito.anyString())).thenReturn(List.of());
 
 		assertThrows(CookbookException.class, () -> service.findByFilter("ADMIN", "X", "VALUE"));
 
@@ -79,19 +79,19 @@ class RecipeServiceImplTest {
 
 	@Test
 	void testPdfNotFound() throws Exception {
-		when(db.all(Mockito.anyString())).thenReturn(Optional.empty());
+		when(db.all(Mockito.anyString())).thenReturn(List.of());
 		assertThrows(CookbookException.class, () -> service.getPdf("ADMIN", Optional.empty(), "VALUE"));
 	}
 
 	@Test
 	void testPdfNotFound2() throws Exception {
-		when(db.all(Mockito.anyString())).thenReturn(Optional.of(new ArrayList<>()));
+		when(db.all(Mockito.anyString())).thenReturn(new ArrayList<>());
 		assertThrows(CookbookException.class, () -> service.getPdf("ADMIN", Optional.empty(), "VALUE"));
 	}
 
 	@Test
 	void testPdfServiceUnavailable() throws Exception {
-		when(db.all(Mockito.anyString())).thenReturn(Optional.of(Arrays.asList(new Recipe())));
+		when(db.all(Mockito.anyString())).thenReturn(Arrays.asList(new Recipe()));
 		var instance = mock(ServiceInstance.class);
 		when(instance.getPort()).thenReturn(8000);
 		when(instance.getHost()).thenReturn("127.0.0.1");
@@ -101,7 +101,7 @@ class RecipeServiceImplTest {
 
 	@Test
 	void testPdfServiceAvailable() throws Exception {
-		when(db.all(Mockito.anyString())).thenReturn(Optional.of(Arrays.asList(new Recipe())));
+		when(db.all(Mockito.anyString())).thenReturn(Arrays.asList(new Recipe()));
 		var instance = mock(ServiceInstance.class);
 		when(instance.getPort()).thenReturn(8000);
 		when(instance.getHost()).thenReturn("127.0.0.1");
@@ -131,7 +131,7 @@ class RecipeServiceImplTest {
 
 	@Test
 	void testCreateRecipe() throws Exception {
-		when(db.insert(Mockito.any())).thenReturn(Optional.empty());
+		when(db.save(Mockito.any())).thenReturn(Optional.empty());
 		assertTrue(service
 				.createRecipe("ADMIN",
 						new RecipeDTO("TITLE", Arrays.asList(new IngredientDTO("X", "Y")), Arrays.asList("STEP 1"), 1d))
@@ -140,7 +140,8 @@ class RecipeServiceImplTest {
 
 	@Test
 	void testUpdateRecipe() throws Exception {
-		when(db.update(Mockito.anyString(), Mockito.anyString(), Mockito.any())).thenReturn(Optional.empty());
+		when(db.byId(Mockito.anyString(), Mockito.anyString())).thenReturn(Optional.of(new Recipe()));
+		when(db.save(Mockito.any(Recipe.class))).thenReturn(new Recipe());
 		assertTrue(service
 				.updateRecipe("ADMIN", "ID",
 						new RecipeDTO("TITLE", Arrays.asList(new IngredientDTO("X", "Y")), Arrays.asList("STEP 1"), 1d))
@@ -148,14 +149,21 @@ class RecipeServiceImplTest {
 	}
 
 	@Test
+	void testUpdateRecipeError() throws Exception {
+		when(db.byId(Mockito.anyString(), Mockito.anyString())).thenReturn(Optional.empty());
+		assertThrows(CookbookException.class, () -> service.updateRecipe("ADMIN", "ID",
+				new RecipeDTO("TITLE", Arrays.asList(new IngredientDTO("X", "Y")), Arrays.asList("STEP 1"), 1d)));
+	}
+
+	@Test
 	void testDeleteOk() throws Exception {
-		when(db.delete(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
+		when(db.byId(Mockito.anyString(), Mockito.anyString())).thenReturn(Optional.of(new Recipe()));
 		assertDoesNotThrow(() -> service.deleteRecipe("UserId", "ID"));
 	}
 
 	@Test
 	void testDeleteBad() throws Exception {
-		when(db.delete(Mockito.anyString(), Mockito.anyString())).thenReturn(false);
+		when(db.byId(Mockito.anyString(), Mockito.anyString())).thenReturn(Optional.empty());
 		assertThrows(CookbookException.class, () -> service.deleteRecipe("UserId", "ID"));
 	}
 
