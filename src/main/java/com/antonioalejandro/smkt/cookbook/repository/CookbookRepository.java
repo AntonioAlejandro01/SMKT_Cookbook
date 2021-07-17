@@ -20,7 +20,7 @@ public interface CookbookRepository extends CrudRepository<Recipe, String> {
 	@Query("{ userId: ?0, \"ingredients.name\": { $in : ?1}}")
 	public List<Recipe> byIngredients(String userId, List<Pattern> patterns);
 
-	@Query("{ userId: ?0, time: { $lte: ?1 }")
+	@Query("{ userId: ?0, time: { $lte: ?1 } }")
 	public List<Recipe> byTime(String userId, double time);
 
 	@Query("{ userId: ?0, title: { $regex: ?1, $options: \"i\" } }")
