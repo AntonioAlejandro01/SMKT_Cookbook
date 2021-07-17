@@ -12,6 +12,7 @@ RUN mvn clean package  -Dmaven.test.skip
 
 RUN mv ./target/smkt-cookbook.jar /app.jar
 
+
 FROM openjdk:11-jre-slim
 
 WORKDIR /opt/server
@@ -25,9 +26,8 @@ ENV DB_NAME=smkt
 ENV DB_CONNECTION=mongodb://root:secret@localhost:27017/
 ENV ID_FILES_INSTANCE=smkt-files
 ENV ID_OAUTH_INSTANCE=smkt-oauth
-
+ENV OAUTH_BASIC_AUTH=c21hcnRraXRjaGVuYXBwOnNlY3JldA==
 
 EXPOSE ${PORT}
 
-CMD java -jar app.jar --server.port="${PORT}" --eureka.client.service-url.defaultZone="${EUREKA_URL}" --logging.level.'[com.antonioalejandro.smkt.cookbook]'="${LEVEL}" --spring.data.mongodb.uri="${DB_CONNECTION}" --spring.data.mongodb.database="${DB_NAME}" --id_files_instance="${ID_FILES_INSTANCE}"  --id_oauth_instance="${ID_OAUTH_INSTANCE}"
-
+CMD java -jar app.jar --server.port="${PORT}" --eureka.client.service-url.defaultZone="${EUREKA_URL}" --logging.level.'[com.antonioalejandro.smkt.cookbook]'="${LEVEL}" --spring.data.mongodb.uri="${DB_CONNECTION}" --spring.data.mongodb.database="${DB_NAME}" --id_files_instance="${ID_FILES_INSTANCE}"  --id_oauth_instance="${ID_OAUTH_INSTANCE}" --oauthBasicAuth="${OAUTH_BASIC_AUTH}"
