@@ -8,7 +8,7 @@ import static org.mockito.Mockito.mock;
 
 import org.junit.jupiter.api.Test;
 
-import com.antonioalejandro.smkt.cookbook.db.CookbookDatabaseImpl;
+import com.antonioalejandro.smkt.cookbook.repository.CookbookRepository;
 
 class FilterEnumTest {
 
@@ -34,14 +34,14 @@ class FilterEnumTest {
 	}
 
 	@Test
-	 void testFunctionSearch() throws Exception {
+	void testFunctionSearch() throws Exception {
 		assertNotNull(FilterEnum.TIME.getFunctionSearch());
 		assertDoesNotThrow(() -> {
-			FilterEnum.TIME.getFunctionSearch().search("", "0.23", mock(CookbookDatabaseImpl.class));
+			FilterEnum.TIME.getFunctionSearch().search("", "0.23", mock(CookbookRepository.class));
 		});
 		assertNotNull(FilterEnum.TITLE.getFunctionSearch());
 		assertDoesNotThrow(() -> {
-			FilterEnum.TITLE.getFunctionSearch().search("", "", mock(CookbookDatabaseImpl.class));
+			FilterEnum.TITLE.getFunctionSearch().search("", "", mock(CookbookRepository.class));
 		});
 
 	}

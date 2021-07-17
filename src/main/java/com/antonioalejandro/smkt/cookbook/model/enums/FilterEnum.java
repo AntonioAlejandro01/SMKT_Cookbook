@@ -24,14 +24,16 @@ public enum FilterEnum {
 
 	@Getter
 	private String name;
-	
+
 	/**
-	 * List with prepared JSON that contain all filters. Only created the first time that it's called
+	 * List with prepared JSON that contain all filters. Only created the first time
+	 * that it's called
 	 */
 	private static List<Map<String, String>> listToSend;
 
 	/**
 	 * Create Filter Enum instance
+	 * 
 	 * @param name {@link String}
 	 */
 	private FilterEnum(String name) {
@@ -40,6 +42,7 @@ public enum FilterEnum {
 
 	/**
 	 * Return a filled {@link Optional} if the name matches with any of the enum.
+	 * 
 	 * @param name {@link String}
 	 * @return {@link Optional}&lt;{@link FilterEnum}&gt;
 	 */
@@ -48,7 +51,9 @@ public enum FilterEnum {
 	}
 
 	/**
-	 * Create a list with a prepared JSON to be sent. Only create the list if is the first time that the method it's called
+	 * Create a list with a prepared JSON to be sent. Only create the list if is the
+	 * first time that the method it's called
+	 * 
 	 * @return {@link List}&lt;{@link Map}&lt;{@link String}, {@link String}&gt;&gt;
 	 */
 	public static List<Map<String, String>> toBeSended() {
@@ -60,13 +65,15 @@ public enum FilterEnum {
 		return FilterEnum.listToSend;
 
 	}
+
 	/**
 	 * Return the function associated with each filter
+	 * 
 	 * @return {@link SearchFunction}
 	 */
 	public SearchFunction getFunctionSearch() {
-		return this == TIME ? (uId, val, d) -> d.byTime(uId, Double.parseDouble(val))
-				: (uId, val, d) -> d.byTitle(uId, val);
+		return this == TIME ? (uId, val, repo) -> Optional.ofNullable(repo.byTime(uId, Double.parseDouble(val)))
+				: (uId, val, repo) -> Optional.ofNullable(repo.byTitle(uId, val));
 	}
 
 }
