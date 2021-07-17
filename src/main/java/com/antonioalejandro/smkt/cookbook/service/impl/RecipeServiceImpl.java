@@ -2,6 +2,8 @@ package com.antonioalejandro.smkt.cookbook.service.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,11 +13,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.antonioalejandro.smkt.cookbook.db.CookbookDatabase;
 import com.antonioalejandro.smkt.cookbook.model.Recipe;
 import com.antonioalejandro.smkt.cookbook.model.dto.RecipeDTO;
 import com.antonioalejandro.smkt.cookbook.model.enums.FilterEnum;
 import com.antonioalejandro.smkt.cookbook.model.exceptions.CookbookException;
+import com.antonioalejandro.smkt.cookbook.repository.CookbookRepository;
 import com.antonioalejandro.smkt.cookbook.service.RecipeService;
 import com.antonioalejandro.smkt.cookbook.utils.Mappers;
 import com.antonioalejandro.smkt.cookbook.utils.UUIDGenerator;
@@ -45,7 +47,7 @@ public class RecipeServiceImpl implements RecipeService, Mappers, UUIDGenerator 
 	private static final String ENDPOINT_ID = "/recipe";
 
 	@Autowired
-	private CookbookDatabase db;
+	private CookbookRepository cbRepo;
 
 	@Autowired
 	private DiscoveryClient discoveryClient;
@@ -57,14 +59,14 @@ public class RecipeServiceImpl implements RecipeService, Mappers, UUIDGenerator 
 	@Override
 	public Optional<List<Recipe>> findAll(String userId) throws CookbookException {
 		log.info("--> RecipeServiceImpl findAll userId: {}", userId);
-		return db.all(userId);
+		return Optional.ofNullable(cbRepo.all(userId));
 	}
 
 	/** {@inherithDoc} */
 	@Override
 	public Optional<Recipe> findById(String userId, String id) throws CookbookException {
 		log.info("--> RecipeServiceImpl  findById userId: {}, id: {}", userId, id);
-		return db.byId(userId, id);
+		return cbRepo.byId(userId, id);
 	}
 
 	/** {@inherithDoc} */
@@ -72,7 +74,8 @@ public class RecipeServiceImpl implements RecipeService, Mappers, UUIDGenerator 
 	public Optional<List<Recipe>> findByIngredients(String userId, List<String> ingredientsNames)
 			throws CookbookException {
 		log.info("--> RecipeServiceImpl  findByIngredients userId: {}, ingredients: {}", userId, ingredientsNames);
-		return db.byIngredients(userId, ingredientsNames);
+		return Optional.ofNullable(cbRepo.byIngredients(userId, ingredientsNames.stream()
+				.map(name -> Pattern.compile(name, Pattern.CASE_INSENSITIVE)).collect(Collectors.toList())));
 	}
 
 	/** {@inherithDoc} */
@@ -84,7 +87,7 @@ public class RecipeServiceImpl implements RecipeService, Mappers, UUIDGenerator 
 			throw new CookbookException(HttpStatus.BAD_REQUEST, "the filter is not valid");
 		}
 
-		return filterEnum.get().getFunctionSearch().search(userId, value, db);
+		return filterEnum.get().getFunctionSearch().search(userId, value, cbRepo);
 	}
 
 	/** {@inherithDoc} */
@@ -131,24 +134,40 @@ public class RecipeServiceImpl implements RecipeService, Mappers, UUIDGenerator 
 
 		log.debug("--> RecipeServiceImpl createRecipe generated UUID: {}", recipeToInsert.getId());
 
-		return db.insert(recipeToInsert);
+		return Optional.ofNullable(cbRepo.save(recipeToInsert));
 	}
 
 	/** {@inherithDoc} */
 	@Override
 	public Optional<Recipe> updateRecipe(String userId, String id, RecipeDTO recipe) throws CookbookException {
 		log.info("--> RecipeServiceImpl updateRecipe userId: {}, id: {}, recipe: {}", userId, id, recipe);
-		return db.update(userId, id, this.dtoToRecipe(recipe));
+
+		var oRecipeSaved = cbRepo.byId(userId, id);
+
+		if (oRecipeSaved.isEmpty()) {
+			throw new CookbookException(HttpStatus.NOT_FOUND, "The id is not valid");
+		}
+
+		var recipeToSave = this.dtoToRecipe(recipe);
+		var oldRecipe = oRecipeSaved.get();
+
+		recipeToSave.setId(oldRecipe.getId());
+		recipeToSave.setUserId(oldRecipe.getUserId());
+
+		return Optional.ofNullable(cbRepo.save(recipeToSave));
 	}
 
 	/** {@inherithDoc} */
 	@Override
 	public void deleteRecipe(String userId, String id) throws CookbookException {
 		log.info("--> RecipeServiceImpl deleteRecipe: {} userId: {}, id: {}", userId, id);
-		if (!db.delete(userId, id)) {
-			log.warn("The recipe can't be deleted");
-			throw new CookbookException(HttpStatus.FORBIDDEN, "the id can't be deleted");
+		var oRecipeSaved = cbRepo.byId(userId, id);
+
+		if (oRecipeSaved.isEmpty()) {
+			throw new CookbookException(HttpStatus.NOT_FOUND, "The id is not valid");
 		}
+
+		cbRepo.deleteById(oRecipeSaved.get().getId());
 
 	}
 
